@@ -12,11 +12,10 @@ async def test_project(dut):
 
     dut._log.info("Starting Cocotb test...")
 
-    # Setup clock: 10us period = 100 kHz
-    clock = Clock(dut.clk, 10, units="us")
+    clock = Clock(dut.clk, 10, units="us")  # 100kHz
     cocotb.start_soon(clock.start())
 
-    # Apply reset
+    # Reset
     dut.rst.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
@@ -25,16 +24,16 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 2)
 
     # === Test case 1 ===
-    # Input: 0b10101010 → Expected output: 0x99
-    dut.ui_in.value = 0b10101010
+    dut.ui_in.value = 0b10101010  # input
     dut.uio_in.value = 0b00000001  # start = 1
     await ClockCycles(dut.clk, 1)
-    dut.uio_in.value = 0b00000000  # clear start
+    dut.uio_in.value = 0b00000000
     await ClockCycles(dut.clk, 5)
 
-    expected = 0x99  # Based on manual parity calc
+    expected = 0x99  # From XOR calc in conv4.v logic
     actual = dut.uo_out.value.integer
     dut._log.info(f"Got encoded output: 0x{actual:02X}, expected: 0x{expected:02X}")
     assert actual == expected, f"Test failed: got 0x{actual:02X}, expected 0x{expected:02X}"
 
     dut._log.info("Test passed.")
+
