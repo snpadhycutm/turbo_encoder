@@ -39,3 +39,27 @@ module tt_um_turbo_enc_8bit (
     assign uo_out = encoded_out;
 
 endmodule
+module conv4 (
+    input clk,
+    input rst,
+    input [7:0] data_in,
+    output reg [3:0] parity
+);
+
+    integer i;
+    reg [2:0] shift;
+
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            shift <= 3'd0;
+            parity <= 4'd0;
+        end else begin
+            for (i = 0; i < 4; i = i + 1) begin
+                shift <= {data_in[i*2], shift[2:1]};
+                parity[i] <= data_in[i*2] ^ shift[0] ^ shift[2]; // G = 1 + D + D^2
+            end
+        end
+    end
+
+endmodule
+
