@@ -8,33 +8,33 @@ from cocotb.triggers import ClockCycles
 
 @cocotb.test()
 async def test_project(dut):
-    dut._log.info("Start")
+    """Cocotb test for Tiny Tapeout 8-bit turbo encoder"""
 
-    # Set the clock period to 10 us (100 KHz)
+    dut._log.info("Starting Cocotb test...")
+
+    # Setup clock: 10us period = 100 kHz
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
-    dut.ena.value = 1
+    # Apply reset
+    dut.rst.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
+    await ClockCycles(dut.clk, 5)
+    dut.rst.value = 0
+    await ClockCycles(dut.clk, 2)
 
-    dut._log.info("Test project behavior")
-
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
-
-    # Wait for one clock cycle to see the output values
+    # === Test case 1 ===
+    # Input: 0b10101010 → Expected output: 0x99
+    dut.ui_in.value = 0b10101010
+    dut.uio_in.value = 0b00000001  # start = 1
     await ClockCycles(dut.clk, 1)
+    dut.uio_in.value = 0b00000000  # clear start
+    await ClockCycles(dut.clk, 5)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+    expected = 0x99  # Based on manual parity calc
+    actual = dut.uo_out.value.integer
+    dut._log.info(f"Got encoded output: 0x{actual:02X}, expected: 0x{expected:02X}")
+    assert actual == expected, f"Test failed: got 0x{actual:02X}, expected 0x{expected:02X}"
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    dut._log.info("Test passed.")
