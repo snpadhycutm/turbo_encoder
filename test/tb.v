@@ -1,20 +1,29 @@
 `default_nettype none
-module tb;
-    reg clk = 0;
-    reg rst = 1;
-    reg  [7:0] ui_in;
-    reg  [7:0] uio_in;
-    wire [7:0] uo_out;
+`timescale 1ns / 1ps
 
-    always #5 clk = ~clk;  // 100 MHz
-    tt_um_turbo_enc_8bit dut (.clk(clk), .rst(rst), .ui_in(ui_in), .uio_in(uio_in), .uo_out(uo_out));
+module tb ();
 
-    initial begin
-        ui_in = 0;
-        uio_in = 0;
-        #20 rst = 0;
-        #200;
-        $finish;
-    end
+  reg clk;
+  reg rst_n;
+  reg ena;
+  reg [7:0] ui_in;
+  reg [7:0] uio_in;
+  wire [7:0] uo_out;
+  wire [7:0] uio_out;
+  wire [7:0] uio_oe;
+
+
+  // DUT instantiation
+  tt_um_turbo_enc_8bit dut (
+      .clk(clk),
+      .rst(~rst_n),          // Your module uses active-high reset
+      .ui_in(ui_in),
+      .uio_in(uio_in),
+      .uo_out(uo_out)
+      // No uio_out/uio_oe in your design, so not connected
+  );
+
+ 
+
 endmodule
 
