@@ -16,8 +16,7 @@ project:
   # Source files located in ./src/
   source_files:
     - "tt_um_turbo_enc_8bit.v"
-    - "conv4.v"
-
+    
 # Pinout: provide names for documentation/datasheet purposes
 pinout:
   # Inputs
