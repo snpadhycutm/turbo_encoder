@@ -3,7 +3,7 @@
 project:
   title:        "8-bit Turbo Encoder"
   author:       "CUTM"
-  discord:      "yourdiscord#1234"  # Optional: update if using Discord
+  discord:      "yourdiscord#123456"  # Optional: update if using Discord
   description:  "Encodes 8-bit input using two convolutional encoders into an 8-bit output"
   language:     "Verilog"
   clock_hz:     1000000             # 1 MHz clock
